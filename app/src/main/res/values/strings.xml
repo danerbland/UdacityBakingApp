@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Baking-App</string>
+    <string name="json_url">https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json</string>
+
+    <string name="recipe_extra_key">recipe_extra</string>
+    <string name="step_extra_key">step_extra</string>
+    <string name="step_id_extra_key">step_id_extra</string>
+
+    <string name="ingredients_label">Ingredients</string>
+    <string name="steps_label">Steps</string>
+
+    <string name="next_button_label">Next</string>
+    <string name="previous_button_label">Prev</string>
+</resources>
