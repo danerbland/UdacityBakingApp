@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,15 +107,17 @@ public class MainActivity extends AppCompatActivity
                     try{
                         String jsonRespose = NetworkUtils.getResponseFromHttpUrl(jsonURL);
                         //TODO - sync Database with json response?
-                        //addRecipesToDatabase(jsonRespose);
+                        addRecipesToDatabase(jsonRespose);
                         return OpenRecipeJsonUtils.getRecipesFromJSON(jsonRespose);
 
                     } catch (Exception e){
                         e.printStackTrace();
-                        return null;
+                        Log.e(TAG, "Returning Recipes from Database");
+                        return getRecipesFromDatabase();
                     }
                 }
-                return null;
+                Log.e(TAG, "Returning Recipes from Database");
+                return getRecipesFromDatabase();
             }
 
 
@@ -159,19 +162,34 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    //TODO fix this so that the recipes are inserted correctly and don't fuck up.
+    //TODO when the recipes are changed to sync with a service, update this method.
     public void addRecipesToDatabase (String jsonResponse){
         ArrayList<Recipe> recipes = OpenRecipeJsonUtils.getRecipesFromJSON(jsonResponse);
         List<RecipeEntry> recipeEntries = mDb.RecipeDao().loadAllRecipes();
 
+        //Only add recipies if the database hasn't been consructed
+        if(recipeEntries.size() != 0){
+            return;
+        }
+
         for(Recipe recipe: recipes){
             RecipeEntry newRecipeEntry = new RecipeEntry(recipe.getmId(), recipe.getmName(),
-                    recipe.getmServings(), recipe.getmIngredientsList(), recipe.getmStepsList());
-            if(!recipeEntries.contains(newRecipeEntry)){
-                Log.e(TAG, "inserted recipe to database: " + newRecipeEntry.getName());
-                mDb.RecipeDao().insertRecipe(newRecipeEntry);
-            }
+                    recipe.getmServings(), recipe.getmImagePath(), recipe.getmIngredientsList(), recipe.getmStepsList());
+            Log.e(TAG, "inserted recipe to database: " + newRecipeEntry.getName());
+            mDb.RecipeDao().insertRecipe(newRecipeEntry);
+
         }
+    }
+
+    public ArrayList<Recipe> getRecipesFromDatabase(){
+        List<RecipeEntry> recipeEntries = mDb.RecipeDao().loadAllRecipes();
+        ArrayList<Recipe> recipeArrayList = new ArrayList<Recipe>();
+        for(RecipeEntry recipeEntry:recipeEntries){
+            Recipe newRecipe = new Recipe(recipeEntry.getId(), recipeEntry.getName(), recipeEntry.getServings(),
+                    recipeEntry.getImagepath(),recipeEntry.getIngredients(), recipeEntry.getSteps());
+            recipeArrayList.add(newRecipe);
+        }
+        return recipeArrayList;
     }
 
 }

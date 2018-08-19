@@ -23,7 +23,7 @@ public class StepsListConverter {
     public static ArrayList<Step> toArrayList(String arrayListJsonString){
         try {
             JSONArray array = new JSONArray(arrayListJsonString);
-            return OpenRecipeJsonUtils.getStepListFromJSON(array);
+            return OpenRecipeJsonUtils.getStepListFromRecipeEntry(array);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

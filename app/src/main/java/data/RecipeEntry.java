@@ -17,13 +17,15 @@ public class RecipeEntry {
     private int id;
     private String name;
     private int servings;
+    private String imagepath;
     private ArrayList<Ingredient> ingredients;
     private ArrayList<Step> steps;
 
-    public RecipeEntry(int id, String name, int servings, ArrayList<Ingredient> ingredients, ArrayList<Step> steps){
+    public RecipeEntry(int id, String name, int servings, String imagepath, ArrayList<Ingredient> ingredients, ArrayList<Step> steps){
         this.id = id;
         this.name = name;
         this.servings = servings;
+        this.imagepath = imagepath;
         this.ingredients = ingredients;
         this.steps = steps;
     }
@@ -69,6 +71,14 @@ public class RecipeEntry {
 
     public void setSteps(ArrayList<Step> steps) {
         this.steps = steps;
+    }
+
+    public String getImagepath() {
+        return imagepath;
+    }
+
+    public void setImagepath(String imagepath) {
+        this.imagepath = imagepath;
     }
 }
 

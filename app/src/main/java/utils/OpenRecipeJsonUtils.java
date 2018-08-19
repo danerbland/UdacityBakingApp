@@ -91,6 +91,8 @@ public class OpenRecipeJsonUtils {
         }
     }
 
+
+
     public static ArrayList<Step> getStepListFromJSON (JSONArray StepArray){
         try {
             ArrayList stepList = new ArrayList<Step>();
@@ -113,5 +115,47 @@ public class OpenRecipeJsonUtils {
         }
     }
 
+    public static ArrayList<Ingredient> getIngredientListFromRecipeEntry (JSONArray IngredientArray){
+        try {
+            ArrayList ingredientList = new ArrayList<Ingredient>();
+            for (int i = 0; i < IngredientArray.length(); i++) {
+                JSONObject ingredientObject = IngredientArray.getJSONObject(i);
+                Ingredient ingredient = new Ingredient(
+                        ingredientObject.getInt("mQuantity"),
+                        ingredientObject.getString("mMeasure"),
+                        ingredientObject.getString("mIngredientName")
+                );
+                ingredientList.add(ingredient);
+            }
+            return ingredientList;
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    public static ArrayList<Step> getStepListFromRecipeEntry (JSONArray StepArray){
+        try {
+            ArrayList stepList = new ArrayList<Step>();
+            for (int i = 0; i < StepArray.length(); i++) {
+                JSONObject stepObject = StepArray.getJSONObject(i);
+                Step step = new Step(
+                        stepObject.getInt("mId"),
+                        stepObject.getString("mShortDescription"),
+                        stepObject.getString("mDescription"),
+                        stepObject.getString("mVideoUrl"),
+                        stepObject.getString("mThumbnailUrl")
+                );
+                stepList.add(step);
+            }
+            return stepList;
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }
