@@ -1,6 +1,5 @@
 package com.example.android.baking_app;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;

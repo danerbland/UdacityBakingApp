@@ -1,15 +1,11 @@
 package com.example.android.baking_app;
 
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -35,7 +31,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         //Instantiate mRecipe for use.
         if(getIntent().hasExtra(getString(R.string.recipe_extra_key))) {
             mRecipe = getIntent().getExtras().getParcelable(getString(R.string.recipe_extra_key));
-            Log.e(TAG, mRecipe.getmName());
         }
 
         //Update the widget with Recipe Details.  Help from:
@@ -59,11 +54,21 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             mTwoPane = true;
             StepDetailFragment stepDetailFragment = new StepDetailFragment();
             stepDetailFragment.setmRecipe(mRecipe);
-            stepDetailFragment.setmStep(mRecipe.getmStepsList().get(0));
-            mStepId = 0;
-            fragmentManager.beginTransaction()
-                    .add(R.id.step_detail_fragment, stepDetailFragment)
-                    .commit();
+
+            //Load the step from the savedInstanceState if it is not null. If it is null, initialize to first step.
+            if(savedInstanceState!=null){
+                mStepId = savedInstanceState.getInt(getString(R.string.recipe_detail_saved_instance_state_step_id_key), 0);
+                stepDetailFragment.setmStep(mRecipe.getmStepsList().get(mStepId));
+                fragmentManager.beginTransaction()
+                        .add(R.id.step_detail_fragment, stepDetailFragment)
+                        .commit();
+            } else {
+                stepDetailFragment.setmStep(mRecipe.getmStepsList().get(0));
+                mStepId = 0;
+                fragmentManager.beginTransaction()
+                        .add(R.id.step_detail_fragment, stepDetailFragment)
+                        .commit();
+            }
 
         } else {
             mTwoPane = false;
@@ -121,6 +126,14 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
                     .replace(R.id.step_detail_fragment, stepDetailFragment)
                     .commit();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState (Bundle outstate){
+        if(mTwoPane){
+            outstate.putInt(getString(R.string.recipe_detail_saved_instance_state_step_id_key), mStepId);
+        }
+        super.onSaveInstanceState(outstate);
     }
 
 }

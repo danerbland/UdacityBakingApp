@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No Recipe Selected"
+        android:text="@string/widget_no_recipe_selected_message"
         tools:text = "Ingredients list"
         android:id = "@+id/widget_ingredients_list"
         android:layout_margin="8dp"/>

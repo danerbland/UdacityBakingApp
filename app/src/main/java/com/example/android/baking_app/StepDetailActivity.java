@@ -9,7 +9,6 @@ import android.databinding.DataBindingUtil;
 
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.android.baking_app.databinding.ActivityStepDetailBinding;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -44,6 +43,7 @@ public class StepDetailActivity extends AppCompatActivity implements ExoPlayer.E
     private SimpleExoPlayer mSimpleExoPlayer;
     private ActivityStepDetailBinding mBinding;
 
+    //TODO implement saved state so that rotation doesn't restart the video
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +54,7 @@ public class StepDetailActivity extends AppCompatActivity implements ExoPlayer.E
 
         if(getIntent().hasExtra(getString(R.string.step_extra_key))){
             Bundle bundle = getIntent().getExtras();
+            //noinspection ConstantConditions
             mStep = bundle.getParcelable(getString(R.string.step_extra_key));
         } else {
             mStep = null;
@@ -102,7 +103,6 @@ public class StepDetailActivity extends AppCompatActivity implements ExoPlayer.E
 
     private void initializePlayer(Uri mediaUri) {
         if (mSimpleExoPlayer == null) {
-            Log.e(TAG, "initializePlayer with URL: " + mStep.getmVideoUrl());
 
             // Create an instance of the ExoPlayer.
             TrackSelector trackSelector = new DefaultTrackSelector();

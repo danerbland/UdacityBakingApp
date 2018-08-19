@@ -15,8 +15,8 @@ import model.Recipe;
 public class RecipeDetailFragment extends Fragment implements StepsListAdapter.StepOnClickHandler{
 
     private static final String TAG = RecipeDetailFragment.class.getSimpleName();
-    private IngredientListAdapter mIngredientListAdapter;
-    private StepsListAdapter mStepListAdapter;
+    private static IngredientListAdapter mIngredientListAdapter;
+    private static StepsListAdapter mStepListAdapter;
     private Recipe mRecipe;
     private onStepClickListener mStepClickListener;
 
@@ -33,8 +33,8 @@ public class RecipeDetailFragment extends Fragment implements StepsListAdapter.S
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup conatiner, Bundle savedInstanceSate){
-        final View rootView = inflater.inflate(R.layout.recipe_detail_fragment, conatiner, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceSate){
+        final View rootView = inflater.inflate(R.layout.recipe_detail_fragment, container, false);
 
         RecyclerView mIngredientsRecyclerView = rootView.findViewById(R.id.recyclerview_ingredients_list);
         RecyclerView mStepRecyclerView = rootView.findViewById(R.id.recyclerview_steps_list);

@@ -1,8 +1,6 @@
 package com.example.android.baking_app;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
@@ -16,7 +14,6 @@ import android.util.Log;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +54,8 @@ public class MainActivity extends AppCompatActivity
 
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    GridView mRecipeGridview;
-    RecipeMenuAdapter mAdapter;
+    private GridView mRecipeGridview;
+    private RecipeMenuAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,10 +102,10 @@ public class MainActivity extends AppCompatActivity
                 URL jsonURL = NetworkUtils.buildGenericJSONURL(getApplicationContext());
                 if(jsonURL != null){
                     try{
-                        String jsonRespose = NetworkUtils.getResponseFromHttpUrl(jsonURL);
+                        String jsonResponse = NetworkUtils.getResponseFromHttpUrl(jsonURL);
                         //TODO - sync Database with json response?
-                        addRecipesToDatabase(jsonRespose);
-                        return OpenRecipeJsonUtils.getRecipesFromJSON(jsonRespose);
+                        addRecipesToDatabase(jsonResponse);
+                        return OpenRecipeJsonUtils.getRecipesFromJSON(jsonResponse);
 
                     } catch (Exception e){
                         e.printStackTrace();
@@ -135,7 +132,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if(data == null){
-            Toast.makeText(this, "Unable to load data from network", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Unable to load data from network", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "onLoadFinished: Null Data Returned");
         }
     }
@@ -163,11 +160,11 @@ public class MainActivity extends AppCompatActivity
 
 
     //TODO when the recipes are changed to sync with a service, update this method.
-    public void addRecipesToDatabase (String jsonResponse){
+    private void addRecipesToDatabase (String jsonResponse){
         ArrayList<Recipe> recipes = OpenRecipeJsonUtils.getRecipesFromJSON(jsonResponse);
         List<RecipeEntry> recipeEntries = mDb.RecipeDao().loadAllRecipes();
 
-        //Only add recipies if the database hasn't been consructed
+        //Only add recipes if the database hasn't been constructed
         if(recipeEntries.size() != 0){
             return;
         }
@@ -181,7 +178,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public ArrayList<Recipe> getRecipesFromDatabase(){
+    private ArrayList<Recipe> getRecipesFromDatabase(){
         List<RecipeEntry> recipeEntries = mDb.RecipeDao().loadAllRecipes();
         ArrayList<Recipe> recipeArrayList = new ArrayList<Recipe>();
         for(RecipeEntry recipeEntry:recipeEntries){

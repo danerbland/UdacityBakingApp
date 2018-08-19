@@ -22,7 +22,6 @@ public class IngredientsListConverter {
     @TypeConverter
     public static ArrayList<Ingredient> toArrayList(String arrayListJsonString){
         try {
-            Log.e(TAG, arrayListJsonString);
             JSONArray array = new JSONArray(arrayListJsonString);
             return OpenRecipeJsonUtils.getIngredientListFromRecipeEntry(array);
         } catch (JSONException e) {

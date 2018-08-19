@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import model.Ingredient;
 import model.Recipe;
@@ -41,7 +40,7 @@ public class OpenRecipeJsonUtils {
             JSONArray recipesJSONArray = new JSONArray(jsonString);
 
             //Check for null data
-            if(recipesJSONArray.length() == 0 || recipesJSONArray == null){
+            if(recipesJSONArray == null|| recipesJSONArray.length() == 0){
                 return null;
             }
 

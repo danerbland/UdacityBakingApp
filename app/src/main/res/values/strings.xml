@@ -11,4 +11,9 @@
 
     <string name="next_button_label">Next</string>
     <string name="previous_button_label">Prev</string>
+    <string name="recipe_list_item_background">Recipe List Item Background</string>
+    <string name="exo_play_button_description">Play Button</string>
+    <string name="exo_pause_button_description">Pause Button</string>
+    <string name="widget_no_recipe_selected_message">No Recipe Selected</string>
+    <string name="recipe_detail_saved_instance_state_step_id_key">step_id_key</string>
 </resources>

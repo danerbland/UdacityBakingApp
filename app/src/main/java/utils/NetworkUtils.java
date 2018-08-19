@@ -3,10 +3,8 @@ package utils;
 
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 
-import com.example.android.baking_app.MainActivity;
 import com.example.android.baking_app.R;
 
 import java.io.IOException;

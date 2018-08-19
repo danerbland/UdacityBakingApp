@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.android.baking_app.databinding.ActivityStepDetailBinding;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -43,16 +41,18 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     private static int mCurrentStepId;
     private static Step mStep;
     private SimpleExoPlayer mSimpleExoPlayer;
-    private Button mNextStepButton;
-    private Button mPrevStepButton;
-    private TextView mDescriptionTextView;
+    private static Button mNextStepButton;
+    private static Button mPrevStepButton;
+    private static TextView mDescriptionTextView;
     private SimpleExoPlayerView mSimpleExoPlayerView;
 
-    public StepDetailFragment(){};
+    public StepDetailFragment(){}
+
+    //TODO implement saved state so that rotation doesn't restart the video
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup conatiner, Bundle savedInstanceSate) {
-        final View rootView = inflater.inflate(R.layout.step_detail_fragment, conatiner, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceSate) {
+        final View rootView = inflater.inflate(R.layout.step_detail_fragment, container, false);
 
         mNextStepButton = rootView.findViewById(R.id.button_next_step);
         mPrevStepButton = rootView.findViewById(R.id.button_previous_step);

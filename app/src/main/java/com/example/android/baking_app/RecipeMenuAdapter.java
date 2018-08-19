@@ -1,12 +1,9 @@
 package com.example.android.baking_app;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,7 +19,7 @@ public class RecipeMenuAdapter extends BaseAdapter{
     private static final String TAG = RecipeMenuAdapter.class.getSimpleName();
     private Context mContext;
     private ArrayList<Recipe> mRecipeArrayList;
-    LayoutInflater mLayoutInflater;
+    private LayoutInflater mLayoutInflater;
     private RecipeClickHandler mClickHandler;
 
     public interface RecipeClickHandler {
