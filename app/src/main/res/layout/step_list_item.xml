@@ -8,6 +8,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="16dp"
+        android:layout_margin="4dp"
         tools:text = "##"
         android:id = "@+id/textview_step_number"/>
 

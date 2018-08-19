@@ -1,6 +1,6 @@
 package com.example.android.baking_app;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,24 +18,29 @@ public class RecipeDetailFragment extends Fragment implements StepsListAdapter.S
     private IngredientListAdapter mIngredientListAdapter;
     private StepsListAdapter mStepListAdapter;
     private Recipe mRecipe;
+    private onStepClickListener mStepClickListener;
+
+    public interface onStepClickListener{
+        void onStepSelected(int stepIndex);
+    }
 
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
     }
 
-    public RecipeDetailFragment(){ }
+    public RecipeDetailFragment(){
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup conatiner, Bundle savedInstanceSate){
-        final View rootView = inflater.inflate(R.layout.activity_recipe_detail, conatiner, false);
+        final View rootView = inflater.inflate(R.layout.recipe_detail_fragment, conatiner, false);
 
         RecyclerView mIngredientsRecyclerView = rootView.findViewById(R.id.recyclerview_ingredients_list);
         RecyclerView mStepRecyclerView = rootView.findViewById(R.id.recyclerview_steps_list);
 
         if(getActivity().getIntent().hasExtra(getString(R.string.recipe_extra_key))) {
             mRecipe = getActivity().getIntent().getExtras().getParcelable(getString(R.string.recipe_extra_key));
-            Log.e(TAG, mRecipe.getmName());
         }
 
         //Initialize our Ingredients RecyclerView
@@ -59,6 +64,10 @@ public class RecipeDetailFragment extends Fragment implements StepsListAdapter.S
 
     @Override
     public void onClick(int index) {
+        mStepClickListener.onStepSelected(index);
+    }
 
+    public void setmStepClickListener(onStepClickListener listener){
+        mStepClickListener = listener;
     }
 }

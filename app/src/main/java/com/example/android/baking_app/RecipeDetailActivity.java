@@ -1,5 +1,10 @@
 package com.example.android.baking_app;
 
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.nfc.Tag;
 import android.support.v7.app.AppCompatActivity;
@@ -7,10 +12,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import model.Recipe;
 
-public class RecipeDetailActivity extends AppCompatActivity implements StepsListAdapter.StepOnClickHandler{
+public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailFragment.onStepClickListener{
 
     private static final String TAG = RecipeDetailActivity.class.getSimpleName();
     private static Recipe mRecipe;
@@ -18,50 +24,55 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepsList
     private StepsListAdapter mStepListAdapter;
     private RecyclerView mIngredientsRecyclerView;
     private RecyclerView mStepRecyclerView;
+    private Boolean mTwoPane;
+    private int mStepId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
 
-        //Get Recipe Extra from intent.
+        //Instantiate mRecipe for use.
         if(getIntent().hasExtra(getString(R.string.recipe_extra_key))) {
             mRecipe = getIntent().getExtras().getParcelable(getString(R.string.recipe_extra_key));
             Log.e(TAG, mRecipe.getmName());
         }
 
-        mIngredientsRecyclerView = findViewById(R.id.recyclerview_ingredients_list);
-        mStepRecyclerView = findViewById(R.id.recyclerview_steps_list);
+        //Update the widget with Recipe Details.  Help from:
+        //https://stackoverflow.com/questions/3455123/programmatically-update-widget-from-activity-service-receiver
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, BakingWidgetProvider.class));
+        BakingWidgetProvider.updateBakingWidgets(this, appWidgetManager, mRecipe, appWidgetIds);
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_ingredients_list);
+
+
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        RecipeDetailFragment recipeDetailFragment = new RecipeDetailFragment();
+        recipeDetailFragment.setmStepClickListener(this);
+        fragmentManager.beginTransaction()
+                .add(R.id.recipe_detail_fragment, recipeDetailFragment)
+        .commit();
+
+        //Check if we are two-pane
+        if(findViewById(R.id.step_detail_fragment) != null){
+            mTwoPane = true;
+            StepDetailFragment stepDetailFragment = new StepDetailFragment();
+            stepDetailFragment.setmRecipe(mRecipe);
+            stepDetailFragment.setmStep(mRecipe.getmStepsList().get(0));
+            mStepId = 0;
+            fragmentManager.beginTransaction()
+                    .add(R.id.step_detail_fragment, stepDetailFragment)
+                    .commit();
+
+        } else {
+            mTwoPane = false;
+        }
 
         //Set the Action Bar title to the recipe name
         getSupportActionBar().setTitle(mRecipe.getmName());
 
 
-        //Initialize our Ingredients RecyclerView
-
-        LinearLayoutManager ingredientLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mIngredientsRecyclerView.setLayoutManager(ingredientLayoutManager);
-        mIngredientListAdapter = new IngredientListAdapter(this, mRecipe.getmIngredientsList());
-        mIngredientsRecyclerView.setAdapter(mIngredientListAdapter);
-
-        //Initialize our Steps RecyclerView
-
-        LinearLayoutManager stepLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mStepRecyclerView.setLayoutManager(stepLayoutManager);
-        mStepListAdapter = new StepsListAdapter(this, this);
-        mStepListAdapter.setmStepArrayList(mRecipe.getmStepsList());
-        mStepRecyclerView.setAdapter(mStepListAdapter);
-
-
-    }
-
-    @Override
-    public void onClick(int index) {
-        Intent intentToStartStepActivity = new Intent(RecipeDetailActivity.this, StepDetailActivity.class);
-        intentToStartStepActivity.putExtra(getString(R.string.step_extra_key), mRecipe.getmStepsList().get(index));
-        intentToStartStepActivity.putExtra(getString(R.string.recipe_extra_key), mRecipe);
-        intentToStartStepActivity.putExtra(getString(R.string.step_id_extra_key), index);
-        startActivity(intentToStartStepActivity);
     }
 
     @Override
@@ -69,4 +80,47 @@ public class RecipeDetailActivity extends AppCompatActivity implements StepsList
         Intent intentToStartMainActivity = new Intent(this, MainActivity.class);
         startActivity(intentToStartMainActivity);
     }
+
+    @Override
+    public void onStepSelected(int stepIndex) {
+        if(!mTwoPane){
+            Intent intentToStartStepActivity = new Intent(RecipeDetailActivity.this, StepDetailActivity.class);
+            intentToStartStepActivity.putExtra(getString(R.string.step_extra_key), mRecipe.getmStepsList().get(stepIndex));
+            intentToStartStepActivity.putExtra(getString(R.string.recipe_extra_key), mRecipe);
+            intentToStartStepActivity.putExtra(getString(R.string.step_id_extra_key), stepIndex);
+            startActivity(intentToStartStepActivity);
+        } else {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            StepDetailFragment stepDetailFragment = new StepDetailFragment();
+            stepDetailFragment.setmStep(mRecipe.getmStepsList().get(stepIndex));
+            mStepId=stepIndex;
+            fragmentManager.beginTransaction()
+                    .replace(R.id.step_detail_fragment, stepDetailFragment)
+                    .commit();
+        }
+    }
+
+    //If the "Next" or "Prev" button is clicked, open the next or previous step.
+    public void onStepChangeButtonClick(View view){
+        if(view == findViewById(R.id.button_next_step)){
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            StepDetailFragment stepDetailFragment = new StepDetailFragment();
+            stepDetailFragment.setmStep(mRecipe.getmStepsList().get(mStepId + 1));
+            mStepId += 1;
+            fragmentManager.beginTransaction()
+                    .replace(R.id.step_detail_fragment, stepDetailFragment)
+                    .commit();
+
+        }
+        if(view == findViewById(R.id.button_previous_step)){
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            StepDetailFragment stepDetailFragment = new StepDetailFragment();
+            stepDetailFragment.setmStep(mRecipe.getmStepsList().get(mStepId - 1));
+            mStepId -= 1;
+            fragmentManager.beginTransaction()
+                    .replace(R.id.step_detail_fragment, stepDetailFragment)
+                    .commit();
+        }
+    }
+
 }

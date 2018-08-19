@@ -71,7 +71,7 @@ public class OpenRecipeJsonUtils {
     }
 
     //takes a JSONArray of ingredients and returns an arraylist
-    private static ArrayList<Ingredient> getIngredientListFromJSONArray (JSONArray IngredientArray){
+    public static ArrayList<Ingredient> getIngredientListFromJSONArray (JSONArray IngredientArray){
         try {
             ArrayList ingredientList = new ArrayList<Ingredient>();
             for (int i = 0; i < IngredientArray.length(); i++) {
@@ -91,7 +91,7 @@ public class OpenRecipeJsonUtils {
         }
     }
 
-    private static ArrayList<Step> getStepListFromJSON (JSONArray StepArray){
+    public static ArrayList<Step> getStepListFromJSON (JSONArray StepArray){
         try {
             ArrayList stepList = new ArrayList<Step>();
             for (int i = 0; i < StepArray.length(); i++) {

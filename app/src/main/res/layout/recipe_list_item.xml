@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
     android:layout_height="75dp"
-    android:layout_margin="12dp">
+    android:layout_margin="12dp"
+    android:padding="4dp"
+    android:background="@color/colorGrey">
 
     <ImageView
         android:id="@+id/imageview_recipe_list_item_image"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="75dp"
         android:scaleType="fitXY"
         android:src="@drawable/ic_launcher_foreground" />
@@ -18,7 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="TEST TEXT"
-        android:textColor="@color/colorWhite"
+        android:textSize="28dp"
+        android:gravity="center"
+        android:textColor="@color/colorBlack"
         android:layout_alignParentTop="true"
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true" />

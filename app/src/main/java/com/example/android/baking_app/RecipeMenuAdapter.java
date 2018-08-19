@@ -79,7 +79,7 @@ public class RecipeMenuAdapter extends BaseAdapter{
         if(mRecipeArrayList.get(position).getmImagePath() != null && !mRecipeArrayList.get(position).getmImagePath().equals("")) {
             Picasso.with(mContext).load(mRecipeArrayList.get(position).getmImagePath()).into(recipeImageView);
         }   else  {
-            recipeImageView.setImageResource(R.drawable.pure_lust);
+            recipeImageView.setImageResource(R.color.colorPrimaryLight);
         }
         recipeImageView.setOnClickListener(new View.OnClickListener(){
             @Override

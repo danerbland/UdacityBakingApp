@@ -39,7 +39,6 @@ public class IngredientListAdapter extends RecyclerView.Adapter<IngredientListAd
             int quantity = mIngredientList.get(position).getmQuantity();
             String measure = mIngredientList.get(position).getmMeasure();
             String ingredient = mIngredientList.get(position).getmIngredientName();
-            Log.e(TAG, ingredient);
             holder.mQuantityTextview.setText(String.valueOf(quantity));
             holder.mMeasureTextview.setText(measure);
             holder.mIngredientNameTextview.setText(ingredient);
