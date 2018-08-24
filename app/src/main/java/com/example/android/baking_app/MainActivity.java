@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private ArrayList<Recipe> getRecipesFromDatabase(){
+    public ArrayList<Recipe> getRecipesFromDatabase(){
         List<RecipeEntry> recipeEntries = mDb.RecipeDao().loadAllRecipes();
         ArrayList<Recipe> recipeArrayList = new ArrayList<Recipe>();
         for(RecipeEntry recipeEntry:recipeEntries){

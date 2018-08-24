@@ -16,4 +16,7 @@
     <string name="exo_pause_button_description">Pause Button</string>
     <string name="widget_no_recipe_selected_message">No Recipe Selected</string>
     <string name="recipe_detail_saved_instance_state_step_id_key">step_id_key</string>
+
+    <string name="exoplayer_position_instance_state_key">exoplayer_position</string>
+    <string name="exoplayer_play_state_instance_state_key">exoplayer_play_state</string>
 </resources>

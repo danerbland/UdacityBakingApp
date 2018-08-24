@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.support.v4.app.FragmentManager;
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 
 import model.Recipe;
+import model.Step;
 
 public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailFragment.onStepClickListener{
 
@@ -52,17 +54,17 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         //Check if we are two-pane
         if(findViewById(R.id.step_detail_fragment) != null){
             mTwoPane = true;
+
             StepDetailFragment stepDetailFragment = new StepDetailFragment();
             stepDetailFragment.setmRecipe(mRecipe);
 
             //Load the step from the savedInstanceState if it is not null. If it is null, initialize to first step.
+            //Load the exo player state from savedInstanceState.  Pass the state and position to the fragment.
             if(savedInstanceState!=null){
-                mStepId = savedInstanceState.getInt(getString(R.string.recipe_detail_saved_instance_state_step_id_key), 0);
-                stepDetailFragment.setmStep(mRecipe.getmStepsList().get(mStepId));
-                fragmentManager.beginTransaction()
-                        .add(R.id.step_detail_fragment, stepDetailFragment)
-                        .commit();
+                mStepId = savedInstanceState.getInt(getString(R.string.recipe_detail_saved_instance_state_step_id_key));
+
             } else {
+                //Log.e(TAG, "Creating Fragment. savedInstanceState == null");
                 stepDetailFragment.setmStep(mRecipe.getmStepsList().get(0));
                 mStepId = 0;
                 fragmentManager.beginTransaction()
@@ -75,8 +77,10 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         }
 
         //Set the Action Bar title to the recipe name
-        getSupportActionBar().setTitle(mRecipe.getmName());
-
+        if(mRecipe!=null) {
+            getSupportActionBar().setTitle(mRecipe.getmName());
+        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -99,6 +103,9 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             StepDetailFragment stepDetailFragment = new StepDetailFragment();
             stepDetailFragment.setmStep(mRecipe.getmStepsList().get(stepIndex));
             mStepId=stepIndex;
+            //Log.e(TAG, "setting ExoPlayer position and state");
+            stepDetailFragment.setmPlaybackPosition(new Long(0));
+            stepDetailFragment.setmPlaybackState(false);
             fragmentManager.beginTransaction()
                     .replace(R.id.step_detail_fragment, stepDetailFragment)
                     .commit();
@@ -111,6 +118,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             FragmentManager fragmentManager = getSupportFragmentManager();
             StepDetailFragment stepDetailFragment = new StepDetailFragment();
             stepDetailFragment.setmStep(mRecipe.getmStepsList().get(mStepId + 1));
+            stepDetailFragment.setmPlaybackPosition(new Long(0));
+            stepDetailFragment.setmPlaybackState(false);
             mStepId += 1;
             fragmentManager.beginTransaction()
                     .replace(R.id.step_detail_fragment, stepDetailFragment)
@@ -121,6 +130,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             FragmentManager fragmentManager = getSupportFragmentManager();
             StepDetailFragment stepDetailFragment = new StepDetailFragment();
             stepDetailFragment.setmStep(mRecipe.getmStepsList().get(mStepId - 1));
+            stepDetailFragment.setmPlaybackPosition(new Long(0));
+            stepDetailFragment.setmPlaybackState(false);
             mStepId -= 1;
             fragmentManager.beginTransaction()
                     .replace(R.id.step_detail_fragment, stepDetailFragment)
@@ -131,7 +142,10 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     @Override
     protected void onSaveInstanceState (Bundle outstate){
         if(mTwoPane){
+            StepDetailFragment.collectExoPlayerInfo();
             outstate.putInt(getString(R.string.recipe_detail_saved_instance_state_step_id_key), mStepId);
+            outstate.putBoolean(getString(R.string.exoplayer_play_state_instance_state_key), StepDetailFragment.getmPlaybackState());
+            outstate.putLong(getString(R.string.exoplayer_position_instance_state_key), StepDetailFragment.getmPlaybackPosition());
         }
         super.onSaveInstanceState(outstate);
     }

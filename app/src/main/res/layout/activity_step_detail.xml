@@ -27,11 +27,17 @@
             app:layout_constraintTop_toBottomOf="@id/simple_exo_player_view_step"
             android:background="@color/colorPrimaryLight"/>
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageview_step_thumbnail"
+            app:layout_constraintTop_toBottomOf="@id/divider_step_detail"/>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textview_step_description"
-            app:layout_constraintTop_toBottomOf="@id/divider_step_detail"
+            app:layout_constraintTop_toBottomOf="@id/imageview_step_thumbnail"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Some Recipe Description Here"
             android:layout_margin="8dp"/>

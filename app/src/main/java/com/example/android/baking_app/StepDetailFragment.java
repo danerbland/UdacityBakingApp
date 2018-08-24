@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -30,33 +31,39 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import model.Recipe;
 import model.Step;
 
 public class StepDetailFragment extends Fragment implements ExoPlayer.EventListener {
 
-    private static final String TAG = StepDetailActivity.class.getSimpleName();
+    private static final String TAG = StepDetailFragment.class.getSimpleName();
     private static Recipe mRecipe;
     private static int mCurrentStepId;
     private static Step mStep;
-    private SimpleExoPlayer mSimpleExoPlayer;
+    public static SimpleExoPlayer mSimpleExoPlayer;
     private static Button mNextStepButton;
     private static Button mPrevStepButton;
     private static TextView mDescriptionTextView;
+    private static ImageView mThumbnailImageView;
     private SimpleExoPlayerView mSimpleExoPlayerView;
+
+    private static boolean mPlaybackState = false;
+    private static Long mPlaybackPosition = new Long(0);
 
     public StepDetailFragment(){}
 
-    //TODO implement saved state so that rotation doesn't restart the video
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceSate) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.step_detail_fragment, container, false);
+
+        Log.e(TAG, "onCreateView Called");
 
         mNextStepButton = rootView.findViewById(R.id.button_next_step);
         mPrevStepButton = rootView.findViewById(R.id.button_previous_step);
         mDescriptionTextView = rootView.findViewById(R.id.textview_step_description);
+        mThumbnailImageView = rootView.findViewById(R.id.imageview_step_thumbnail);
         mSimpleExoPlayerView = rootView.findViewById(R.id.simple_exo_player_view_step);
 
 
@@ -67,27 +74,41 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
             mCurrentStepId = getActivity().getIntent().getExtras().getInt(getString(R.string.step_id_extra_key));
         }
 
-        if (mCurrentStepId == mRecipe.getmStepsList().size() - 1) {
+        //Hide Next button if the list doesn't have a next step.
+        //TODO figure out a way to handle bad json here - Yellocake example.
+        try{
+            mRecipe.getmStepsList().get(mCurrentStepId + 1);
+        } catch(Exception e){
+            //Log.e(TAG, "hiding next button. Step: " + Integer.toString(mCurrentStepId));
             mNextStepButton.setVisibility(View.GONE);
         }
+
         if (mCurrentStepId == 0) {
             mPrevStepButton.setVisibility(View.GONE);
-            Log.e(TAG, "mBinding is working properly here");
         }
-
-
 
         //Handle the ExoPlayerView.  Hide it if there is no video.
         if(mStep.getmVideoUrl() != null && !mStep.getmVideoUrl().equalsIgnoreCase("")) {
             //Initialize the ExoPlayer
-            Log.e(TAG, mStep.getmVideoUrl());
             Uri videoUri = Uri.parse(mStep.getmVideoUrl());
-            initializePlayer(videoUri);
+            if(mSimpleExoPlayer == null && savedInstanceState != null){
+                mPlaybackPosition = savedInstanceState.getLong(getString(R.string.exoplayer_position_instance_state_key));
+                mPlaybackState = savedInstanceState.getBoolean(getString(R.string.exoplayer_play_state_instance_state_key));
+                initializePlayer(videoUri, mPlaybackPosition, mPlaybackState);
+            } else if(mSimpleExoPlayer == null){
+                initializePlayer(videoUri, new Long(0), false);
+            }
         } else{
             mSimpleExoPlayerView.setVisibility(View.GONE);
         }
 
 
+        //Load the image thumbnail if available
+        if(mStep.getmThumbnailUrl() != null && !mStep.getmThumbnailUrl().equalsIgnoreCase("")){
+            Picasso.with(getActivity()).load(mStep.getmThumbnailUrl()).into(mThumbnailImageView);
+        } else{
+            mThumbnailImageView.setVisibility(View.GONE);
+        }
 
         //Set the Description Text
         mDescriptionTextView.setText(mStep.getmDescription());
@@ -96,19 +117,11 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     }
 
 
-    //Release the ExoPlayer
-    @Override
-    public void onDestroyView(){
-        super.onDestroyView();
-        if(mSimpleExoPlayer!=null) {
-            releasePlayer();
-        }
-    }
-
     //Method for initializing the player
-    private void initializePlayer(Uri mediaUri) {
+    private void initializePlayer(Uri mediaUri, Long position, boolean playWhenReady) {
+        //Log.e(TAG, "initializePlayer called");
+
         if (mSimpleExoPlayer == null) {
-            Log.e(TAG, "initializePlayer with URL: " + mStep.getmVideoUrl());
 
             // Create an instance of the ExoPlayer.
             TrackSelector trackSelector = new DefaultTrackSelector();
@@ -126,8 +139,10 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                     getActivity(), userAgent, bandwidthMeter);
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, dataSourceFactory
                     , new DefaultExtractorsFactory(), null, null);
+            mSimpleExoPlayer.setPlayWhenReady(playWhenReady);
             mSimpleExoPlayer.prepare(mediaSource);
-            mSimpleExoPlayer.setPlayWhenReady(true);
+            mSimpleExoPlayer.seekTo(mSimpleExoPlayer.getCurrentWindowIndex(), position);
+            //Log.e(TAG, "Player initialized with playWhenReady: " + Boolean.toString(playWhenReady) +" and Position: " + Long.toString(position));
         }
     }
 
@@ -155,7 +170,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
+        collectExoPlayerInfo();
     }
 
     @Override
@@ -171,7 +186,6 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     public void setmStep(Step step){
         mStep = step;
         mCurrentStepId = step.getmId();
-        Log.e(TAG, "setmStep. mCurrentStepId: " + String.valueOf(mCurrentStepId));
     }
 
     public void setmRecipe(Recipe recipe){
@@ -182,4 +196,57 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
         return mCurrentStepId;
     }
 
+    @Override
+    public void onPause() {
+        if(Util.SDK_INT <= 23 && mSimpleExoPlayer != null){
+            collectExoPlayerInfo();
+            releasePlayer();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        if(Util.SDK_INT >23 && mSimpleExoPlayer!=null) {
+            collectExoPlayerInfo();
+            releasePlayer();
+        }
+        super.onStop();
+    }
+
+    //Save the player instance state. Credit for assist to:
+    //https://stackoverflow.com/questions/45481775/exoplayer-restore-state-when-resumed
+    @Override
+    public void onSaveInstanceState(Bundle state){
+        //Log.e(TAG, "onSaveInstanceState Called");
+        if(mSimpleExoPlayer!=null) {
+            state.putLong(getString(R.string.exoplayer_position_instance_state_key), mSimpleExoPlayer.getCurrentPosition());
+            state.putBoolean(getString(R.string.exoplayer_play_state_instance_state_key), mSimpleExoPlayer.getPlayWhenReady());
+        }
+        super.onSaveInstanceState(state);
+    }
+
+    public static boolean getmPlaybackState() {
+        return mPlaybackState;
+    }
+
+    public static Long getmPlaybackPosition() {
+        return mPlaybackPosition;
+    }
+
+    public static void setmPlaybackState (boolean bool){
+        mPlaybackState = bool;
+    }
+
+    public static void setmPlaybackPosition (long l){
+        mPlaybackPosition = l;
+    }
+
+    public static void collectExoPlayerInfo(){
+        if(mSimpleExoPlayer!=null) {
+            //Log.e(TAG, "collectExoPlayerInfo called");
+            mPlaybackState = mSimpleExoPlayer.getPlayWhenReady();
+            mPlaybackPosition = mSimpleExoPlayer.getCurrentPosition();
+        }
+    }
 }
