@@ -47,10 +47,8 @@ public class StepDetailActivity extends AppCompatActivity implements ExoPlayer.E
     private static SimpleExoPlayer mSimpleExoPlayer;
     private ActivityStepDetailBinding mBinding;
 
-    private Long mPlaybackPositon = new Long(0);
+    private Long mPlaybackPositon = Long.valueOf(0);
     private boolean mPlaybackState = false;
-
-    //TODO deal with thumbnail URL
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +77,7 @@ public class StepDetailActivity extends AppCompatActivity implements ExoPlayer.E
 
 
         //Hide Next button if the list doesn't have a next step.
-        //TODO figure out a way to handle bad json here - Yellocake example.
+        //TODO figure out a way to handle bad json here - Yellowcake example.
         try{
             mRecipe.getmStepsList().get(mCurrentStepId+1);
         } catch(Exception e){
@@ -112,7 +110,6 @@ public class StepDetailActivity extends AppCompatActivity implements ExoPlayer.E
         } else{
             mBinding.imageviewStepThumbnail.setVisibility(View.GONE);
         }
-        //TODO handle loading the image thumbnail.  Hide it if there is no thumbnail;
 
         //Set the Description Text
         mBinding.textviewStepDescription.setText(mStep.getmDescription());

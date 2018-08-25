@@ -11,9 +11,9 @@ public class SampleRecipe {
     private static Recipe mSampleRecipe;
 
     SampleRecipe(){
-        ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
+        ArrayList<Ingredient> ingredients = new ArrayList<>();
         ingredients.add(new Ingredient(0, "sample-measure", "sample-ingredient-name"));
-        ArrayList<Step> steps = new ArrayList<Step>();
+        ArrayList<Step> steps = new ArrayList<>();
         steps.add(new Step(0, "sample-short-description", "sample-description", "", ""));
         mSampleRecipe = new Recipe(0, "sample-recipe", 0, "", ingredients, steps);
     }

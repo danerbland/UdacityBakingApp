@@ -45,7 +45,7 @@ public class OpenRecipeJsonUtils {
             }
 
             //create recipe array list to return.
-            ArrayList<Recipe> RecipeList = new ArrayList<Recipe>();
+            ArrayList<Recipe> RecipeList = new ArrayList<>();
 
             //iterate through our JSONArray and add recipes to our recipelist.
             for(int i = 0; i < recipesJSONArray.length(); i++){

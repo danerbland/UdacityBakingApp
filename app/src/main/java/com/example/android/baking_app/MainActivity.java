@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity
 
     public ArrayList<Recipe> getRecipesFromDatabase(){
         List<RecipeEntry> recipeEntries = mDb.RecipeDao().loadAllRecipes();
-        ArrayList<Recipe> recipeArrayList = new ArrayList<Recipe>();
+        ArrayList<Recipe> recipeArrayList = new ArrayList<>();
         for(RecipeEntry recipeEntry:recipeEntries){
             Recipe newRecipe = new Recipe(recipeEntry.getId(), recipeEntry.getName(), recipeEntry.getServings(),
                     recipeEntry.getImagepath(),recipeEntry.getIngredients(), recipeEntry.getSteps());

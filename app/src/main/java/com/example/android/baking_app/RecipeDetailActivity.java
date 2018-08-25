@@ -104,7 +104,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             stepDetailFragment.setmStep(mRecipe.getmStepsList().get(stepIndex));
             mStepId=stepIndex;
             //Log.e(TAG, "setting ExoPlayer position and state");
-            stepDetailFragment.setmPlaybackPosition(new Long(0));
+            stepDetailFragment.setmPlaybackPosition(Long.valueOf(0));
             stepDetailFragment.setmPlaybackState(false);
             fragmentManager.beginTransaction()
                     .replace(R.id.step_detail_fragment, stepDetailFragment)
@@ -118,7 +118,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             FragmentManager fragmentManager = getSupportFragmentManager();
             StepDetailFragment stepDetailFragment = new StepDetailFragment();
             stepDetailFragment.setmStep(mRecipe.getmStepsList().get(mStepId + 1));
-            stepDetailFragment.setmPlaybackPosition(new Long(0));
+            stepDetailFragment.setmPlaybackPosition(Long.valueOf(0));
             stepDetailFragment.setmPlaybackState(false);
             mStepId += 1;
             fragmentManager.beginTransaction()
@@ -130,7 +130,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             FragmentManager fragmentManager = getSupportFragmentManager();
             StepDetailFragment stepDetailFragment = new StepDetailFragment();
             stepDetailFragment.setmStep(mRecipe.getmStepsList().get(mStepId - 1));
-            stepDetailFragment.setmPlaybackPosition(new Long(0));
+            stepDetailFragment.setmPlaybackPosition(Long.valueOf(0));
             stepDetailFragment.setmPlaybackState(false);
             mStepId -= 1;
             fragmentManager.beginTransaction()

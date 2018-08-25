@@ -43,14 +43,14 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
     private static int mCurrentStepId;
     private static Step mStep;
     public static SimpleExoPlayer mSimpleExoPlayer;
-    private static Button mNextStepButton;
-    private static Button mPrevStepButton;
-    private static TextView mDescriptionTextView;
-    private static ImageView mThumbnailImageView;
+    private Button mNextStepButton;
+    private Button mPrevStepButton;
+    private TextView mDescriptionTextView;
+    private ImageView mThumbnailImageView;
     private SimpleExoPlayerView mSimpleExoPlayerView;
 
     private static boolean mPlaybackState = false;
-    private static Long mPlaybackPosition = new Long(0);
+    private static Long mPlaybackPosition = Long.valueOf(0);
 
     public StepDetailFragment(){}
 
@@ -96,7 +96,7 @@ public class StepDetailFragment extends Fragment implements ExoPlayer.EventListe
                 mPlaybackState = savedInstanceState.getBoolean(getString(R.string.exoplayer_play_state_instance_state_key));
                 initializePlayer(videoUri, mPlaybackPosition, mPlaybackState);
             } else if(mSimpleExoPlayer == null){
-                initializePlayer(videoUri, new Long(0), false);
+                initializePlayer(videoUri, Long.valueOf(0), false);
             }
         } else{
             mSimpleExoPlayerView.setVisibility(View.GONE);
